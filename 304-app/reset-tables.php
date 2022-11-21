@@ -1,4 +1,4 @@
 <html>
 	<?php include 'secrets.php'; ?>
-	<h1>Placeholder</h1>
+	<h1>Reset all data</h1>
 </html>
