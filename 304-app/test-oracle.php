@@ -23,7 +23,7 @@
 
     <body>
         <h2>Reset</h2>
-        <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
+        <p>If you wish to reset the table press on the reset button. If this is the first time you\'re running this page, you MUST use reset</p>
 
         <form method="POST" action="oracle-test.php">
             <!-- if you want another page to load after the button is clicked, you have to specify that page in the action parameter -->
@@ -106,7 +106,7 @@
 
         function executeBoundSQL($cmdstr, $list) {
             /* Sometimes the same statement will be executed several times with different values for the variables involved in the query.
-		In this case you don't need to create the statement several times. Bound variables cause a statement to only be
+		In this case you don\'t need to create the statement several times. Bound variables cause a statement to only be
 		parsed once and you can reuse the statement. This is also very useful in protecting against SQL injection.
 		See the sample code below for how this function is used */
 
