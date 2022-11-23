@@ -48,7 +48,6 @@ function onReset() {
 	 UNIQUE (license_plate)
 	 )
 	 ");
-
 	executePlainSQL("CREATE TABLE Driver(
 	 id CHAR(8),
 	 first_name CHAR(30),
@@ -60,7 +59,7 @@ function onReset() {
 	 id CHAR(3),
 	 route_name CHAR(50),
 	 route_number CHAR(3),
-	 model CHAR(20),
+	 model CHAR(25),
 	 PRIMARY KEY (id)
 	 )
 	 ");
@@ -97,13 +96,12 @@ function onReset() {
 	 PRIMARY KEY (card_id, time, stop)
 	 )
 	 ");
-	// TODO
 	executePlainSQL("CREATE TABLE DriverAssignment(
 	 driver_id CHAR(8),
 	 bus_id CHAR(10),
 	 PRIMARY KEY (driver_id, bus_id)
 	 )
-     ");
+	");
 	executePlainSQL("CREATE TABLE AvailableStop(
 	 stop CHAR(10),
 	 route_name CHAR(50),
@@ -114,7 +112,7 @@ function onReset() {
 	executePlainSQL("CREATE TABLE BusModel1(
 	 name CHAR(20),
 	 capacity INT,
-	 fuel_type CHAR(5),
+	 fuel_type CHAR(6),
 	 purchase_cost INT,
 	 operating_cost INT,
 	 PRIMARY KEY (name)
@@ -128,7 +126,7 @@ function onReset() {
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE SkyTrainModel1(
-	 name CHAR(20),
+	 name CHAR(25),
 	 capacity INT,
 	 cars INT,
 	 purchase_cost INT,
@@ -144,18 +142,16 @@ function onReset() {
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE Route1(
-	 name CHAR(50),
+	 route_name CHAR(50),
 	 route_number CHAR(3),
-	 origin CHAR(10),
-	 destination CHAR(10),
-	 rail_type CHAR(20),
 	 distance REAL,
-	 PRIMARY KEY (name, route_number)
+	 PRIMARY KEY (route_name, route_number)
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE Route2(
 	 route_number CHAR(3),
 	 bus_route_type CHAR(20),
+	 rail_type CHAR(20),
 	 PRIMARY KEY (route_number)
 	 )
 	");
@@ -167,7 +163,7 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE Bus
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (name, route_number)
+	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
 	 ON DELETE CASCADE
 	");
 
@@ -177,7 +173,7 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE SkyTrain
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (name, route_number)
+	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
 	 ON DELETE CASCADE
 	");
 
@@ -216,12 +212,12 @@ function onReset() {
 	 ON DELETE CASCADE
 	");
 
-	executePlainSQL("ALTER TABLE Route1
-	ADD FOREIGN KEY (origin) REFERENCES Stop (id)
-	");
+	// executePlainSQL("ALTER TABLE Route1
+	// ADD FOREIGN KEY (origin) REFERENCES Stop (id)
+	// ");
 
 	executePlainSQL("ALTER TABLE AvailableStop
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (name, route_number)
+	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
 	 ON DELETE CASCADE
 	");
 
@@ -235,12 +231,190 @@ function onReset() {
 	 (purchase_cost, operating_cost)
 	");
 
-	executePlainSQL("ALTER TABLE Route1
-	ADD FOREIGN KEY (destination) REFERENCES Stop (id)
-	");
+	// executePlainSQL("ALTER TABLE Route1
+	// ADD FOREIGN KEY (destination) REFERENCES Stop (id)
+	// ");
 
 	executePlainSQL("ALTER TABLE Route1
 	ADD FOREIGN KEY (route_number) REFERENCES Route2(route_number)
+	");
+
+	OCICommit($db_conn);
+	// Bus(id, license_plate, model, route_name, route_number)
+	// Driver(id, first_name, last_name)
+	// SkyTrain(id, route_name, route_number, model)
+	// SkyTrainStation(stopid, name, platforms)
+	// BusStop(stopid, name)
+	// Stop(id, postcode, city)
+	// Zone(zone_number, city)
+	// CompassTap(card_id, time, stop)
+	// DriverAssignment(driver_id, bus_id)
+	// AvailableStop(stop, route_name, route_number)
+	// BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost)
+	// BusModel2(purchase_cost, operating_cost, cost)
+	// SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost)
+	// SkyTrainModel2(purchase_cost, operating_cost, cost)
+	// Route1(name, route_number, origin, destination, rail_type, distance)
+	// Route2(route_number, bus_route_type)
+
+
+
+	executePlainSQL("INSERT ALL
+	INTO Zone(zone_number, city) VALUES (1, 'Vancouver')
+	INTO Zone(zone_number, city) VALUES (2, 'Richmond')
+	INTO Zone(zone_number, city) VALUES (3, 'Pitt Meadows')
+	INTO Zone(zone_number, city) VALUES (2, 'Burnaby')
+	INTO Zone(zone_number, city) VALUES (3, 'Surrey')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO Stop(id, postcode, city) VALUES ('BW', 'V5N4B9', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('CB', 'VVVVVV', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('MT', 'VVVVVV', 'Burnaby')
+	INTO Stop(id, postcode, city) VALUES ('61304', 'V3Y2J4', 'Pitt Meadows')
+	INTO Stop(id, postcode, city) VALUES ('ST', 'V6B2L3', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('50136', 'V5Z0E3', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('56474', 'V6X3M2', 'Richmond')
+	SELECT 1 FROM DUAL
+	");
+
+	// INTO BusStop(stopid, name) VALUES ('50904', 'Westbound E Broadway @ Rupert St')
+	// INTO BusStop(stopid, name) VALUES ('50590', 'Westbound W 4th Ave @ Alma St')
+	// INTO BusStop(stopid, name) VALUES ('50545', 'Southbound Granville St @ Angus Dr')
+	executePlainSQL("INSERT ALL
+	INTO BusStop(stopid, name) VALUES ('50136', 'Oakridge-41st Ave Station @ Bay 2')
+	INTO BusStop(stopid, name) VALUES ('61304', 'Eastbound Lougheed Hwy @ Harris Rd')
+	SELECT 1 FROM DUAL
+	");
+
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('BR', 'Bridgeport', 2)
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('CO', 'Columbia', 2)
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('LG', 'Langara-49th Avenue', 2)
+	executePlainSQL("INSERT ALL
+	INTO SkyTrainStation(stopid, name, platforms) VALUES ('ST', 'Stadium-Chinatown', 3)
+	INTO SkyTrainStation(stopid, name, platforms) VALUES ('BW', 'Commercial-Broadway', 5)
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (500000, 143, 19000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (1200000, 522, 1269000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (700000, 433, 760000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (700000, 302, 740000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (400000, 92, 412000)
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('NFI XN40', 70, 'N Gas', 500000, 143)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('NFI XDE60', 120, 'D-E', 1200000, 522)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS', 70, 'Diesel', 700000, 433)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS HEV', 70, 'D-E', 700000, 302)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSe', 70, 'B-E', 400000, 92)
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO SkyTrainModel2(purchase_cost, operating_cost, cost) VALUES (2450000, 2000, 3180000)
+	INTO SkyTrainModel2(purchase_cost, operating_cost, cost) VALUES (3500000, 1000, 3865000)
+	INTO SkyTrainModel2(purchase_cost, operating_cost, cost) VALUES (3250000, 500, 3432500)
+	INTO SkyTrainModel2(purchase_cost, operating_cost, cost) VALUES (3300000, 1125, 3660625)
+	INTO SkyTrainModel2(purchase_cost, operating_cost, cost) VALUES (3500000, 750, 3773750)
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost) VALUES ('Bombardier ICTS Mark I', 80, 6, 2450000, 2000)
+	INTO SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost) VALUES ('Hyundai Rotem EMU', 200, 2, 3250000, 500)
+	INTO SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost) VALUES ('Bombardier ART Mark II', 130, 4, 3300000, 1125)
+	INTO SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost) VALUES ('Bombardier ART Mark III', 135, 4, 3500000, 1000)
+	INTO SkyTrainModel1(name, capacity, cars, purchase_cost, operating_cost) VALUES ('Alstom Mark V', 160, 3, 3500000, 750)
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO Driver(id, first_name, last_name) VALUES ('28903460', 'Derek', 'Lee')
+	INTO Driver(id, first_name, last_name) VALUES ('90020439', 'Cynthia', 'Newman')
+	INTO Driver(id, first_name, last_name) VALUES ('18834306', 'Evan', 'Holmes')
+	INTO Driver(id, first_name, last_name) VALUES ('44947234', 'Lan', 'Duong')
+	INTO Driver(id, first_name, last_name) VALUES ('63057871', 'Aman', 'Shah')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO CompassTap(card_id, time, stop) VALUES ('53426693990928605252', 35263, '61304')
+	INTO CompassTap(card_id, time, stop) VALUES ('32761835554193258185', 32007, 'BW')
+	INTO CompassTap(card_id, time, stop) VALUES ('29700392471242162660', 71191, '61304')
+	INTO CompassTap(card_id, time, stop) VALUES ('11327375108351674279', 80104, 'BW')
+	INTO CompassTap(card_id, time, stop) VALUES ('32761835554193258185', 67420, 'BW')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('16', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('25', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('6', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('4', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('99', 'B-Line', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R2', 'RapidBus', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R4', 'RapidBus', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('CL', NULL, 'Conventional')
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('ML', NULL, 'Linear Induction')
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('EL', NULL, 'Linear Induction')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO Route1(route_name, route_number, distance) VALUES ('Canada Line', 'CL', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('Expo Line', 'EL', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('Millennium Line', 'ML', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('Commercial-Broadway Station', '99', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('UBC', '99', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('29th Avenue Stn', '16', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('Brentwood Station', '25', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('41st Ave', 'R4', NULL)
+	INTO Route1(route_name, route_number, distance) VALUES ('Marine Dr', 'R2', NULL)
+	SELECT 1 FROM DUAL
+	");
+
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('61772', 'Marine Dr', 'R2')
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('51862', 'Burquitlam Station/SFU', '143')
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('50627', 'Robson/Downtown', '5')
+	executePlainSQL("INSERT ALL
+	INTO AvailableStop(stop, route_name, route_number) VALUES ('50136', '41st Ave', 'R4')
+	INTO AvailableStop(stop, route_name, route_number) VALUES ('ST', 'Expo Line', 'EL')
+	INTO AvailableStop(stop, route_name, route_number) VALUES ('CB', 'Expo Line', 'EL')
+	INTO AvailableStop(stop, route_name, route_number) VALUES ('CB', 'Millennium Line', 'ML')
+	INTO AvailableStop(stop, route_name, route_number) VALUES ('MT', 'Millennium Line', 'ML')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO SkyTrain(id, route_name, route_number, model) VALUES ('111', 'Canada Line', 'CL', 'Hyundai Rotem EMU')
+	INTO SkyTrain(id, route_name, route_number, model) VALUES ('337', 'Expo Line', 'EL', 'Bombardier ART Mark II')
+	INTO SkyTrain(id, route_name, route_number, model) VALUES ('52', 'Expo Line', 'EL', 'Bombardier ICTS Mark I')
+	INTO SkyTrain(id, route_name, route_number, model) VALUES ('144', 'Millennium Line', 'ML', 'Bombardier ICTS Mark I')
+	INTO SkyTrain(id, route_name, route_number, model) VALUES ('219', 'Canada Line', 'CL', 'Hyundai Rotem EMU')
+	SELECT 1 FROM DUAL
+	");
+
+	// INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('16047', 'LG4805', 'NFI XN40', 'White Rock Centre/Willowbrook', '531')
+	executePlainSQL("INSERT ALL
+	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('18022', 'NG5745', 'NFI XDE60', '41st Ave', 'R4')
+	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('9409', 'BY4048', 'Nova Bus LFS HEV', 'Brentwood Station', '25')
+	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('19027', 'NN9907', 'NFI XDE60', 'Marine Dr', 'R2')
+	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('9660', 'KX3049', 'Nova Bus LFS', '29th Avenue Stn', '16')
+	SELECT 1 FROM DUAL
+	");
+
+	// INTO DriverAssignment(driver_id, bus_id) VALUES ('63057871', '16047')
+	executePlainSQL("INSERT ALL
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('44947234', '9660')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('90020439', '18022')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('18834306', '19027')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9409')
+	SELECT 1 FROM DUAL
 	");
 
 	OCICommit($db_conn);
