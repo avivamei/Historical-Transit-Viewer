@@ -39,11 +39,11 @@ function onReset() {
 	OCICommit($db_conn);
 
 	executePlainSQL("CREATE TABLE Bus(
-	 id CHAR(10),
-	 license_plate CHAR(6),
-	 model CHAR(20),
-	 route_name CHAR(50),
 	 route_number CHAR(3),
+	 route_name CHAR(50),
+	 id CHAR(10),
+	 model CHAR(20),
+	 license_plate CHAR(6),
 	 PRIMARY KEY (id),
 	 UNIQUE (license_plate)
 	 )
@@ -56,9 +56,9 @@ function onReset() {
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE SkyTrain(
-	 id CHAR(3),
-	 route_name CHAR(50),
 	 route_number CHAR(3),
+	 route_name CHAR(50),
+	 id CHAR(6),
 	 model CHAR(25),
 	 PRIMARY KEY (id)
 	 )
@@ -103,10 +103,10 @@ function onReset() {
 	 )
 	");
 	executePlainSQL("CREATE TABLE AvailableStop(
-	 stop CHAR(10),
-	 route_name CHAR(50),
 	 route_number CHAR(3),
-	 PRIMARY KEY (stop, route_name, route_number)
+	 route_name CHAR(50),
+	 stop CHAR(10),
+	 PRIMARY KEY (route_name, route_number, stop)
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE BusModel1(
@@ -142,10 +142,10 @@ function onReset() {
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE Route1(
-	 route_name CHAR(50),
 	 route_number CHAR(3),
+	 route_name CHAR(50),
 	 distance REAL,
-	 PRIMARY KEY (route_name, route_number)
+	 PRIMARY KEY (route_number, route_name)
 	 )
 	 ");
 	executePlainSQL("CREATE TABLE Route2(
@@ -163,7 +163,7 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE Bus
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
+	ADD FOREIGN KEY (route_number, route_name) REFERENCES Route1 (route_number, route_name)
 	 ON DELETE CASCADE
 	");
 
@@ -173,7 +173,7 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE SkyTrain
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
+	ADD FOREIGN KEY (route_number, route_name) REFERENCES Route1 (route_number, route_name)
 	 ON DELETE CASCADE
 	");
 
@@ -217,7 +217,7 @@ function onReset() {
 	// ");
 
 	executePlainSQL("ALTER TABLE AvailableStop
-	ADD FOREIGN KEY (route_name, route_number) REFERENCES Route1 (route_name, route_number)
+	ADD FOREIGN KEY (route_number, route_name) REFERENCES Route1 (route_number, route_name)
 	 ON DELETE CASCADE
 	");
 
@@ -262,9 +262,50 @@ function onReset() {
 	executePlainSQL("INSERT ALL
 	INTO Zone(zone_number, city) VALUES (1, 'Vancouver')
 	INTO Zone(zone_number, city) VALUES (2, 'Richmond')
-	INTO Zone(zone_number, city) VALUES (3, 'Pitt Meadows')
 	INTO Zone(zone_number, city) VALUES (2, 'Burnaby')
+	INTO Zone(zone_number, city) VALUES (2, 'North Vancouver')
+	INTO Zone(zone_number, city) VALUES (2, 'West Vancouver')
 	INTO Zone(zone_number, city) VALUES (3, 'Surrey')
+	INTO Zone(zone_number, city) VALUES (3, 'Delta')
+	INTO Zone(zone_number, city) VALUES (3, 'Port Moody')
+	INTO Zone(zone_number, city) VALUES (3, 'Coquitlam')
+	INTO Zone(zone_number, city) VALUES (3, 'Pitt Meadows')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('4', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('6', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('16', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('25', NULL, NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('65', 'Commuity Shuttle', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('99', 'B-Line', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R2', 'RapidBus', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R4', 'RapidBus', NULL)
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('CL', NULL, 'Conventional')
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('EL', NULL, 'Linear Induction')
+	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('ML', NULL, 'Linear Induction')
+	SELECT 1 FROM DUAL
+	");
+
+	// route_name is like the words displayed on the vehicle, usually referring to its destination/direction.
+	// there can be many routes with the same route number
+	// there can be many routes with the same route name
+	executePlainSQL("INSERT ALL
+	INTO Route1(route_number, route_name, distance) VALUES ('CL', 'Waterfront', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('CL', 'Richmond-Brighouse', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('CL', 'YVR-Airport', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('EL', 'Waterfront', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('EL', 'King George', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('EL', 'Production Way-University', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('ML', 'VCC-Clark', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('ML', 'Lafarge Lake-Douglas', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('99', 'Commercial-Broadway Station', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('99', 'UBC', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('16', '29th Avenue Stn', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('25', 'Brentwood Station', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('R4', '41st Ave', NULL)
+	INTO Route1(route_number, route_name, distance) VALUES ('R2', 'Marine Dr', NULL)
 	SELECT 1 FROM DUAL
 	");
 
@@ -350,61 +391,33 @@ function onReset() {
 	INTO CompassTap(card_id, time, stop) VALUES ('32761835554193258185', 67420, 'BW')
 	SELECT 1 FROM DUAL
 	");
-
-	executePlainSQL("INSERT ALL
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('16', NULL, NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('25', NULL, NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('6', NULL, NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('4', NULL, NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('99', 'B-Line', NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R2', 'RapidBus', NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('R4', 'RapidBus', NULL)
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('CL', NULL, 'Conventional')
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('ML', NULL, 'Linear Induction')
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('EL', NULL, 'Linear Induction')
-	SELECT 1 FROM DUAL
-	");
-
-	executePlainSQL("INSERT ALL
-	INTO Route1(route_name, route_number, distance) VALUES ('Canada Line', 'CL', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('Expo Line', 'EL', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('Millennium Line', 'ML', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('Commercial-Broadway Station', '99', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('UBC', '99', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('29th Avenue Stn', '16', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('Brentwood Station', '25', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('41st Ave', 'R4', NULL)
-	INTO Route1(route_name, route_number, distance) VALUES ('Marine Dr', 'R2', NULL)
-	SELECT 1 FROM DUAL
-	");
-
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('61772', 'Marine Dr', 'R2')
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('51862', 'Burquitlam Station/SFU', '143')
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('50627', 'Robson/Downtown', '5')
 	executePlainSQL("INSERT ALL
-	INTO AvailableStop(stop, route_name, route_number) VALUES ('50136', '41st Ave', 'R4')
-	INTO AvailableStop(stop, route_name, route_number) VALUES ('ST', 'Expo Line', 'EL')
-	INTO AvailableStop(stop, route_name, route_number) VALUES ('CB', 'Expo Line', 'EL')
-	INTO AvailableStop(stop, route_name, route_number) VALUES ('CB', 'Millennium Line', 'ML')
-	INTO AvailableStop(stop, route_name, route_number) VALUES ('MT', 'Millennium Line', 'ML')
+	INTO AvailableStop(route_number, route_name, stop) VALUES ('R4', '41st Ave', '50136')
+	INTO AvailableStop(route_number, route_name, stop) VALUES ('EL', 'Waterfront', 'ST')
+	INTO AvailableStop(route_number, route_name, stop) VALUES ('EL', 'Waterfront', 'CB')
+	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'CB')
+	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'MT')
 	SELECT 1 FROM DUAL
 	");
 
 	executePlainSQL("INSERT ALL
-	INTO SkyTrain(id, route_name, route_number, model) VALUES ('111', 'Canada Line', 'CL', 'Hyundai Rotem EMU')
-	INTO SkyTrain(id, route_name, route_number, model) VALUES ('337', 'Expo Line', 'EL', 'Bombardier ART Mark II')
-	INTO SkyTrain(id, route_name, route_number, model) VALUES ('52', 'Expo Line', 'EL', 'Bombardier ICTS Mark I')
-	INTO SkyTrain(id, route_name, route_number, model) VALUES ('144', 'Millennium Line', 'ML', 'Bombardier ICTS Mark I')
-	INTO SkyTrain(id, route_name, route_number, model) VALUES ('219', 'Canada Line', 'CL', 'Hyundai Rotem EMU')
+	INTO SkyTrain(route_number, route_name, id, model) VALUES ('CL', 'Waterfront', '111', 'Hyundai Rotem EMU')
+	INTO SkyTrain(route_number, route_name, id, model) VALUES ('EL', 'Waterfront', '337', 'Bombardier ART Mark II')
+	INTO SkyTrain(route_number, route_name, id, model) VALUES ('EL', 'Waterfront', '52', 'Bombardier ICTS Mark I')
+	INTO SkyTrain(route_number, route_name, id, model) VALUES ('ML', 'VCC-Clark', '144', 'Bombardier ICTS Mark I')
+	INTO SkyTrain(route_number, route_name, id, model) VALUES ('CL', 'Waterfront', '219', 'Hyundai Rotem EMU')
 	SELECT 1 FROM DUAL
 	");
 
 	// INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('16047', 'LG4805', 'NFI XN40', 'White Rock Centre/Willowbrook', '531')
 	executePlainSQL("INSERT ALL
-	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('18022', 'NG5745', 'NFI XDE60', '41st Ave', 'R4')
-	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('9409', 'BY4048', 'Nova Bus LFS HEV', 'Brentwood Station', '25')
-	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('19027', 'NN9907', 'NFI XDE60', 'Marine Dr', 'R2')
-	INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('9660', 'KX3049', 'Nova Bus LFS', '29th Avenue Stn', '16')
+	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R4', '41st Ave', '18022', 'NG5745', 'NFI XDE60')
+	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('25', 'Brentwood Station', '9409', 'BY4048', 'Nova Bus LFS HEV')
+	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R2', 'Marine Dr', '19027', 'NN9907', 'NFI XDE60')
+	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('16', '29th Avenue Stn', '9660', 'KX3049', 'Nova Bus LFS')
 	SELECT 1 FROM DUAL
 	");
 
