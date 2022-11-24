@@ -4,6 +4,7 @@
 - Increased the CHAR(n) length for some fields
 - Removed origin and destination from route (unused)
 - Moved rail_type into route2 instead of route1
+- Added AvailableStop foreign key into CompassTap
 
 ## Setup instructions
 

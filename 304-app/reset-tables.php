@@ -1,5 +1,4 @@
 <html>
-	<!-- <?php include 'secrets.php'; ?> -->
 	<h1>Reset all data</h1>
 		<form method="POST" action="reset-tables.php">
 	 <input type="hidden" id="resetTablesRequest" name="resetTablesRequest">
@@ -92,6 +91,8 @@ function onReset() {
 	executePlainSQL("CREATE TABLE CompassTap(
 	 card_id CHAR(20),
 	 time INT,
+	 route_number CHAR(3),
+	 route_name CHAR(50),
 	 stop CHAR(10),
 	 PRIMARY KEY (card_id, time, stop)
 	 )
@@ -193,7 +194,7 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE CompassTap
-	ADD FOREIGN KEY (stop) REFERENCES Stop (id)
+	ADD FOREIGN KEY (route_number, route_name, stop) REFERENCES AvailableStop (route_number, route_name, stop)
 	 ON DELETE CASCADE
 	 ");
 
@@ -382,15 +383,6 @@ function onReset() {
 	INTO Driver(id, first_name, last_name) VALUES ('63057871', 'Aman', 'Shah')
 	SELECT 1 FROM DUAL
 	");
-
-	executePlainSQL("INSERT ALL
-	INTO CompassTap(card_id, time, stop) VALUES ('53426693990928605252', 35263, '61304')
-	INTO CompassTap(card_id, time, stop) VALUES ('32761835554193258185', 32007, 'BW')
-	INTO CompassTap(card_id, time, stop) VALUES ('29700392471242162660', 71191, '61304')
-	INTO CompassTap(card_id, time, stop) VALUES ('11327375108351674279', 80104, 'BW')
-	INTO CompassTap(card_id, time, stop) VALUES ('32761835554193258185', 67420, 'BW')
-	SELECT 1 FROM DUAL
-	");
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('61772', 'Marine Dr', 'R2')
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('51862', 'Burquitlam Station/SFU', '143')
 	// INTO AvailableStop(stop, route_name, route_number) VALUES ('50627', 'Robson/Downtown', '5')
@@ -400,6 +392,15 @@ function onReset() {
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('EL', 'Waterfront', 'CB')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'CB')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'MT')
+	SELECT 1 FROM DUAL
+	");
+
+	executePlainSQL("INSERT ALL
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('53426693990928605252', '1234', 'R4', '41st Ave', '50136')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '1235', 'EL', 'Waterfront', 'ST')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('29700392471242162660', '1236', 'EL', 'Waterfront', 'CB')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('11327375108351674279', '1237', 'ML', 'VCC-Clark', 'CB')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '1238', 'ML', 'VCC-Clark', 'MT')
 	SELECT 1 FROM DUAL
 	");
 
