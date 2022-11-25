@@ -1,4 +1,9 @@
+<!doctype html>
 <html>
+    <head>
+        <title>Tap manager</title>
+    </head>
+	<a href="."> <p>&lt; Go home</p> </a>
 	<h1>Reset all data</h1>
 		<form method="POST" action="reset-tables.php">
 	 <input type="hidden" id="resetTablesRequest" name="resetTablesRequest">

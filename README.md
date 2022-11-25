@@ -1,10 +1,13 @@
 # Historical Transit Viewer
 
-## Changes since milestone 3
+## Schema changes since milestone 3
 - Increased the CHAR(n) length for some fields
 - Removed origin and destination from route (unused)
 - Moved rail_type into route2 instead of route1
 - Added AvailableStop foreign key into CompassTap
+
+## UI changes since milestone 3
+- Bus/skytrain models by route makes more sense to have on page 4 (model finder) instead of page 2 (tap search)
 
 ## Setup instructions
 

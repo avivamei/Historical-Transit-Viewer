@@ -1,25 +1,55 @@
+<!doctype html>
+<?php
+include 'sql-fns.php';
+
+if (isset($_POST['submitName'])) {
+    onSubmit();
+}
+
+function onSubmit() {
+    echo 'Submitted! This is placeholder text. POST object below:';
+    echo '<br><br><br>';
+    echo(var_dump($_POST));
+    echo '<br><br><br>';
+}
+
+?>
 <html>
-	<?php include 'secrets.php'; ?>
-	<head>
-        <title>CPSC 304 PHP/Oracle Demonstration</title>
+    <head>
+        <title>Bus model finder</title>
     </head>
+    <body>
+	<a href="."> <p>&lt; Go home</p> </a>
+        <h1>Bus model finder</h1>
+        <form method="POST" action="bus-models.php">
+            <br><label for="bus_id">Bus ID:</label>
+            <input name="bus_id" type="text"/>
 
-	<body>
+            <br><label for="capacity">Capacity</label>
+            <input type="checkbox" name="capacity"/>
 
-	<h1>Find the bus model of a specific bus</h1>
+            <br><label for="model_name">Model name:</label>
+            <input type="checkbox" name="name"/>
 
-	<h2>Insert Values into DemoTable</h2>
-        <form method="POST" action="bus-models.php"> <!--refresh page when submitted-->
-            <input type="hidden" id="insertQueryRequest" name="insertQueryRequest">
-            Number: <input type="text" name="insNo"> <br /><br />
-            Name: <input type="text" name="insName"> <br /><br />
+            <br><label for="fuel_type">Fuel type:</label>
+            <input type="checkbox" name="fuel_type"/>
 
-            <input type="submit" value="Insert" name="insertSubmit"></p>
+            <br><label for="purchasing_cost">Purchasing cost:</label>
+            <input type="checkbox" name="purchasing_cost"/>
+
+            <br><label for="operating_cost">Operating cost:</label>
+            <input type="checkbox" name="operating_cost"/>
+
+            <br>
+            <select id="stop_id" name="stop_id">
+                <option value="*" selected>-- Select stop --</option>
+                <?php /*todo*/ ?>
+            </select>
+            <input type="submit" value="Go!" name="submitName">
         </form>
-	<hr />
-
-	<?php
-	?>
-	</body>
-
+        <table>
+            <!-- todo render taps -->
+        </table>
+    </body>
 </html>
+<html
