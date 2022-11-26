@@ -8,6 +8,10 @@
 	<a href="./tap-search.php"> <p>tap search</p> </a>
 	<a href="./driver-experience.php"> <p>driver experience</p> </a>
 	<a href="./bus-models.php"> <p>bus models</p> </a>
+
+	<br>Aggregation with Group By <br>
+	<a href="./groupBy.php"> <p>bus max capacity</p> </a>
+
 	<br><br><br>
 	<a href="./reset-tables.php"> <p>reset tables</p> </a>
 
