@@ -1,17 +1,19 @@
 <html>
     <head>
-        <title>Aggregation with Group By</title>
+        <title>Nested Aggregation with GROUP BY</title>
     </head>
 
     <body>
-        <a href="."> <p>&lt; Go home</p> </a>
-        <h2>Find the max capacity of bus models by fuel type</h2>
-        <form method="GET" action="groupBy.php"> <!--refresh page when submitted-->
-            <input type="hidden" id="groupByRequest" name="groupByRequest">
+    <a href="."> <p>&lt; Go home</p> </a>
+        <h2>Find the max capacity of bus models by fuel type that are larger than the average capacity of all bus models</h2>
+        <form method="GET" action="nestedAggregation.php"> <!--refresh page when submitted-->
+            <input type="hidden" id="nestedRequest" name="nestedRequest">
             SELECT Max(capacity), fuel_type <br />
             FROM BusModels1 <br />
-            GROUP BY fuel_type <br /> <br />
-            <input type="submit" name="groupBy"></p>
+            GROUP BY fuel_type <br />
+            HAVING Max(capacity) > (SELECT Avg(capacity) FROM BusModel1)
+            <br /> <br />
+            <input type="submit" name="nested"></p>
         </form>
 
         <?php
@@ -115,10 +117,10 @@
             OCILogoff($db_conn);
         }
 
-        function handleGroupByRequest() {
+        function handlenestedRequest() {
             global $db_conn;
 
-            $result = executePlainSQL("SELECT fuel_type, Max(capacity) FROM BusModel1 GROUP BY fuel_type");
+            $result = executePlainSQL("SELECT fuel_type, Max(capacity) FROM BusModel1 GROUP BY fuel_type HAVING Max(capacity) > (SELECT Avg(capacity) FROM BusModel1)");
             printResult($result, array("Fuel Type", "Max Capactiy"), "Group By Table");
 
             
@@ -164,15 +166,15 @@
 	// A better coding practice is to have one method that reroutes your requests accordingly. It will make it easier to add/remove functionality.
         function handleGETRequest() {
             if (connectToDB()) {
-                if (array_key_exists('groupBy', $_GET)) {
-                    handleGroupByRequest();
+                if (array_key_exists('nested', $_GET)) {
+                    handlenestedRequest();
                 }
 
                 disconnectFromDB();
             }
         }
 
-		if (isset($_GET['groupByRequest'])) {
+		if (isset($_GET['nestedRequest'])) {
             handleGETRequest();
         }
 		?>
