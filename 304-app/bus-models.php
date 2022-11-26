@@ -1,95 +1,3 @@
-<!doctype html>
-<?php
-include 'sql-fns.php';
-
-function handleGETRequest() {
-		if (connectToDB()) {
-				if (array_key_exists('projjoinRequest', $_GET)) {
-						handleProjectJoinRequest();
-				}
-				disconnectFromDB();
-		}
-}
-
-if (isset($_POST['projjoinRequest'])) {
-		handleGETRequest();
-}
-
-function printResult($result, $header, $name) {
-    $size = count($header);
-
-    $includeHeader = true;
-
-    //table name
-    echo "<b>" . $name . "<b>";
-
-    echo "<table border='1'>";
-
-    //rows
-    while ($rows = OCI_Fetch_Array($result, OCI_BOTH)) {
-
-        // header
-        if ($includeHeader == true) {
-            $includeHeader = false;
-            echo "<tr>";
-
-            foreach($header as $value){
-                echo  "<th>" . $value . "</th>";
-            }
-            echo "</tr>";
-        }
-
-        echo "<tr>";
-
-        for($x = 0; $x < $size; $x++){
-            echo "<td>" . $rows[$x] . "</td>";
-        }
-
-        echo "</tr>";
-    }
-    echo "</table>";
-}
-
-function handleProjectJoinRequest() {
-		global $db_conn;
-
-		$fields = "b.id";
-		$resultfields = "Bus ID, ";
-
-		 if (isset($_GET['capacity'])) {
-				$fields .= ", m.capacity";
-				$resultfields .= ", Capacity ";
-		 }
-		 if (isset($_GET['name'])) {
-				$fields .= ", m.name";
-				$resultfields .= ", Name ";
-		 }
-		 if (isset($_GET['fuel_type'])) {
-				$fields .= ", m.fuel_type";
-				$resultfields .= ", Fuel Type ";
-		}
-		 if (isset($_GET['purchasing_cost'])) {
-				$fields .= ",m.purchasing_cost";
-				$resultfields .= ", Purchasing Cost ";
-		}
-		if (isset($_GET['operating_cost'])) {
-			 $fields .= ", m.operating_cost";
-			 $resultfields .= ", Operating Cost ";
-	 }
-
-	 $tuple = array (
-			 ":bind1" => $_GET['bus_id']
-	 );
-
-	 $alltuples = array ($tuple);
-
-	 $result = executeBoundSQL("SELECT $fields BusModel1 m, JOIN Bus b ON m1.id = b.id WHERE m1.id = :bind1", $alltuples);
-	  printResult($result, $resultfields, "");
-
-		OCICommit($db_conn);
-}
-
-?>
 <html>
     <head>
         <title>Bus model finder</title>
@@ -98,9 +6,17 @@ function handleProjectJoinRequest() {
 	<a href="."> <p>&lt; Go home</p> </a>
         <h1>Bus model finder</h1>
 
-        <form method="GET" action="bus-models.php"> <!--refresh page when submitted-->
-            <input type="hidden" id="countTupleRequest" name="countTupleRequest">
+        <!-- <form method="GET" action="bus-models.php">
+            <input type="hidden" id="joinRequest" name="joinRequest">
             <input type="text" name="bus id"></p>
+            <input type="submit" value="select" name="joinQuery"></p>
+        </form> -->
+
+        <form method="GET" action="bus-models.php"> 
+            Existing bus IDs: 18022, 9409, 19027, 9660 <br> <br>
+            <input type="hidden" id="joinRequest" name="joinRequest">
+            Bus ID: <input type="text" name="Select">
+            <input type="submit" value="select" name="joinQuery"></p>
         </form>
 
         <?php
@@ -204,19 +120,6 @@ function handleProjectJoinRequest() {
             OCILogoff($db_conn);
         }
 
-        function handleCountRequest() {
-            global $db_conn;
-            $select = $_GET['bus id'];
-
-            $query = "SELECT " . $select . " FROM Bus NATURAL JOIN BusModel1";
-            
-            $result = executePlainSQL($query);
-
-            echo $query;
-            echo "<hr />";
-            printResult($result, explode(", ", $select), "Join Table");
-        }
-
         function printResult($result, $header, $name) { 
             $size = count($header);
 
@@ -255,19 +158,38 @@ function handleProjectJoinRequest() {
 
         // HANDLE ALL GET ROUTES
 	// A better coding practice is to have one method that reroutes your requests accordingly. It will make it easier to add/remove functionality.
-        function handleGETRequest() {
+
+        function handleJoinRequest(){
+            global $db_conn;
+            $select = $_GET['Select'];
+
+            $query = "SELECT b.id, b.model, b.license_plate, bm.capacity, bm.fuel_type FROM Bus b, BusModel1 bm WHERE b.model = bm.name and b.id = " . $select;
+            
+            $result = executePlainSQL($query);
+
+            echo $query;
+            echo "<hr />";
+
+            printResult($result, array("id", "license plate", "model", "model capacity", "model fuel type"), "Join Table");
+
+        }
+
+        function handleGETRequest(){
             if (connectToDB()) {
-                if (array_key_exists('countTuples', $_GET)) {
-                    handleCountRequest();
+                if (array_key_exists('joinRequest', $_GET)) {
+                    handleJoinRequest();
                 }
 
                 disconnectFromDB();
             }
         }
 
-		if (isset($_POST['reset']) || isset($_POST['updateSubmit']) || isset($_POST['insertSubmit'])) {
+        if (isset($_GET['joinRequest'])) {
             handleGETRequest();
         }
+
 		?>
+
+        
     </body>
 </html>
