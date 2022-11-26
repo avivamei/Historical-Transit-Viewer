@@ -82,6 +82,7 @@ function onReset() {
 	 ");
 	executePlainSQL("CREATE TABLE Stop(
 	 id CHAR(10),
+	 name CHAR(50),
 	 postcode CHAR(6),
 	 city CHAR(20),
 	 PRIMARY KEY (id)
@@ -184,12 +185,12 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE SkyTrainStation
-	ADD FOREIGN KEY (stopid) REFERENCES Stop (id)
+	ADD FOREIGN KEY (stopid, name) REFERENCES Stop (id, name)
 	 ON DELETE CASCADE
 	");
 
 	executePlainSQL("ALTER TABLE BusStop
-	ADD FOREIGN KEY (stopid) REFERENCES Stop (id)
+	ADD FOREIGN KEY (stopid, name) REFERENCES Stop (id, name)
 	 ON DELETE CASCADE
 	");
 
@@ -316,13 +317,13 @@ function onReset() {
 	");
 
 	executePlainSQL("INSERT ALL
-	INTO Stop(id, postcode, city) VALUES ('BW', 'V5N4B9', 'Vancouver')
-	INTO Stop(id, postcode, city) VALUES ('CB', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, postcode, city) VALUES ('MT', 'VVVVVV', 'Burnaby')
-	INTO Stop(id, postcode, city) VALUES ('61304', 'V3Y2J4', 'Pitt Meadows')
-	INTO Stop(id, postcode, city) VALUES ('ST', 'V6B2L3', 'Vancouver')
-	INTO Stop(id, postcode, city) VALUES ('50136', 'V5Z0E3', 'Vancouver')
-	INTO Stop(id, postcode, city) VALUES ('56474', 'V6X3M2', 'Richmond')
+	INTO Stop(id, name, postcode, city) VALUES ('BW','Commercial-Broadway', 'V5N4B9', 'Vancouver')
+	INTO Stop(id, name, postcode, city) VALUES ('CB', 'Burrard', 'VVVVVV', 'Vancouver')
+	INTO Stop(id, name, postcode, city) VALUES ('MT', 'Metrotown', 'VVVVVV', 'Burnaby')
+	INTO Stop(id, name, postcode, city) VALUES ('61304', 'Eastbound Lougheed Hwy @ Harris Rd', 'V3Y2J4', 'Pitt Meadows')
+	INTO Stop(id, name, postcode, city) VALUES ('ST', 'Stadium-Chinatown', 'V6B2L3', 'Vancouver')
+	INTO Stop(id, name, postcode, city) VALUES ('50136', 'Oakridge-41st Ave Stn @ Bay 2', 'V5Z0E3', 'Vancouver')
+	INTO Stop(id, name, postcode, city) VALUES ('56474', 'Garden City Rd @ Lansdowne Rd', 'V6X3M2', 'Richmond')
 	SELECT 1 FROM DUAL
 	");
 
