@@ -15,38 +15,42 @@ function onSubmit() {
 
 function handleInsertRequest() {
     global $db_conn;
-
-    //Getting the values from user and insert data into the table
+    connectToDB();
     $tuple = array (
-        ":bind1" => $_POST['card_id'],
-        ":bind2" => $_POST['tap_date'],
-        ":bind3" => $_POST['route_name'],
-        ":bind4" => $_POST['stop_id'],
+        'card_id' => $_POST['card_id'],
+        'tap_date' => $_POST['tap_date'],
+        'route_name' => $_POST['route_name'],
+        'stop_id' => $_POST['stop_id'],
     );
 
     $alltuples = array (
         $tuple
     );
 
-    executeBoundSQL("insert into tap values (:bind1, :bind2, :bind3, :bind4)", $alltuples);
+    executeBoundSQL("insert into CompassTap values (:card_id, :time, :route_number, :route_name, :stop)", $alltuples);
     OCICommit($db_conn);
+    disconnectFromDB();
 }
 
 function handleUpdateRequest() {
     global $db_conn;
+    connectToDB();
+    $tuple = array (
+        ":old_tap" => $_POST['old_tap'],
+        ":new_time" => $_POST['new_time'],
+        ":new_route_number" => $_POST['new_route_number'],
+        ":new_route_name" => $_POST['new_route_name'],
+        ":new_stop" => $_POST['new_stop'],
+    );
 
-    $oldID = $_POST['oldID'];
-    $newID = $_POST['newID'];
+    $alltuples = array (
+        $tuple
+    );
 
-    $oldtime = $_POST['oldTime'];
-    $newtime = $_POST['newTime'];
-
-    $oldstop = $_POST['oldStop'];
-    $newstop = $_POST['newStop'];
-
-    executePlainSQL("UPDATE CompassTap SET card_id = " . $newid .", time =  " . $newtime .", stop = " . $newstop ." WHERE card_id = " . $oldid ." AND time = " . $oldtime ." AND stop = " . $oldstop);
+    executeBoundSQL("update CompassTap set time = :new_time, route_number = :new_route_number, route_name = :new_route_name, stop = :new_stop where card_id = :old_id", $alltuples);
 
     OCICommit($db_conn);
+    disconnectFromDB();
 }
 
 function printResult($result, $header, $name) {
@@ -83,6 +87,7 @@ function printResult($result, $header, $name) {
     <body>
         <a href="."> <p>&lt; Go home</p> </a>
         <h1>Tap manager</h1>
+
         <h3>Add a compass tap</h3>
         <form method="POST" action="tap-manager.php">
             <input name="card_id" type="text"/>
@@ -108,40 +113,40 @@ function printResult($result, $header, $name) {
                     echo 'failed to connect to db. Probably too many open connections.';
                     return false;
                 }
-                $stid = executePlainSQL('select distinct id, name from Stop');
+                $stid = executePlainSQL('select distinct route_number, route_name, stop from AvailableStop');
                 while (($row = oci_fetch_object($stid)) != false) {
                     echo var_dump($row);
                 ?>
-                    <option value="<?= $row->ID." ".$row->NAME ?>"><?= $row->ID." ".$row->NAME; ?></option>
+                    <option value="<?= "(".$row->ROUTE_NUMBER.")(".$row->ROUTE_NAME.")(".$row->STOP.")" ?>"><?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME." stop ".$row->STOP; ?></option>
                 <?php } ?>
             </select>
             <input type="submit" value="Go!" name="submitName">
         </form>
 
+        <br><br><br>
         <h3>Edit a compass tap</h3>
         <form method="POST" action="tap-manager.php">
-
-            Old Card ID: <input type="text" name='oldid'> <br /><br />
-            New Card ID: <input type="text" name='newid'> <br /><br />
-
-            Old Date: <input type="date" name='olddate'> <br /><br />
-            New Date: <input type="date" name='newdate'> <br /><br />
-
-            <select name="oldroute" id="oldroute" required="true">
-                <option value="*" selected>-- Select old route --</option>
+            <select name="old_tap" id="old_tap" required="true">
                 <?php
                 if (!connectToDB()) {
                     echo 'failed to connect to db. Probably too many open connections.';
                     return false;
                 }
-                $stid = executePlainSQL('select distinct route_number, route_name from Route1');
+                $stid = executePlainSQL('select * from CompassTap');
                 while (($row = oci_fetch_object($stid)) != false) {
-                    echo var_dump($row);
                 ?>
                     <option value="<?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME ?>"><?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME; ?></option>
                 <?php } ?>
             </select>
-            <select name="newroute" id="newroute" required="true">
+
+            <br><label for="old_tap">Card ID:</label>
+            <input type="text" name='old_tap'>
+
+            <br><label for="new_time">New time:</label>
+            <input type="number" name='new_time'>
+
+            <br><label for="new_route">New route:</label>
+            <select name="new_route" id="new_route" required="true">
                 <option value="*" selected>-- Select new route --</option>
                 <?php
                 if (!connectToDB()) {
@@ -156,21 +161,7 @@ function printResult($result, $header, $name) {
                 <?php } ?>
             </select>
 
-            <select id="oldstop" name="oldstop">
-                <option value="*" selected>-- Select old stop --</option>
-                <?php
-                if (!connectToDB()) {
-                    echo 'failed to connect to db. Probably too many open connections.';
-                    return false;
-                }
-                $stid = executePlainSQL('select distinct id, name from Stop');
-                while (($row = oci_fetch_object($stid)) != false) {
-                    echo var_dump($row);
-                ?>
-                    <option value="<?= $row->ID." ".$row->NAME ?>"><?= $row->ID." ".$row->NAME; ?></option>
-                <?php } ?>
-            </select>
-            <select id="newstop" name="newstop">
+            <select id="new_stop" name="new_stop">
                 <option value="*" selected>-- Select new stop --</option>
                 <?php
                 if (!connectToDB()) {

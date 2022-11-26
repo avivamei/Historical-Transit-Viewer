@@ -98,6 +98,24 @@ function sql_rows($res) {
     return $sql_out;
 }
 
+// "(hi)(two)(3)" =>       ['hi', 'two', '3']
+// "(  hi)(two  )( 3 )" => ['hi', 'two', '3']
+// used for multiple fields stored in a dropdown
+function unparen($input) {
+    $out = [];
+    $pos = 0;
+
+    do {
+        $lparen = strpos($input, '(', $pos);
+        $rparen = strpos($input, ')', $pos);
+        $substring = trim(substr($input, $lparen + 1, $rparen - $lparen - 1));
+        array_push($out, $substring);
+        $pos = $rparen + 1;
+    } while($lparen !== false and $rparen !== false);
+    array_pop($out);
+    return $out;
+}
+
 function connectToDB() {
     global $db_conn;
 
