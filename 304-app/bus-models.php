@@ -2,15 +2,17 @@
 <?php
 include 'sql-fns.php';
 
-if (isset($_POST['submitName'])) {
-    onSubmit();
+function handleGETRequest() {
+		if (connectToDB()) {
+				if (array_key_exists('projjoinRequest', $_GET)) {
+						handleProjectJoinRequest();
+				}
+				disconnectFromDB();
+		}
 }
 
-function onSubmit() {
-    echo 'Submitted! This is placeholder text. POST object below:';
-    echo '<br><br><br>';
-    echo(var_dump($_POST));
-    echo '<br><br><br>';
+if (isset($_POST['projjoinRequest'])) {
+		handleGETRequest();
 }
 
 function printResult($result, $header, $name) {
@@ -48,46 +50,41 @@ function printResult($result, $header, $name) {
     echo "</table>";
 }
 
-function handleJoinRequest() {
+function handleProjectJoinRequest() {
 		global $db_conn;
 
-		$tuple = array (
-				":bind1" => $_GET['id']
-		);
+		$fields = "b.id";
+		$resultfields = "Bus ID, ";
 
-		$alltuples = array ($tuple);
-
-		$result = executeBoundSQL("SELECT  b.id, m.name, m.capacity, m.fueltype, m.purchase_cost, m.operating_cost FROM BusModels M1, BusModels M2 JOIN Bus b ON m1.id = m2.id AND m1.id = b.id WHERE m1.id = :bind1", $alltuples);
-		printResult($result, array("ID", "Name", "Capacity", "Fuel Type", "Purchasing Cost", "Operating Cost"), "Bus Model");
-}
-
-function handleProjectRequest() {
-		global $db_conn;
-
-		$result = "";
-
-		 if (isset($_GET['bus_id'])) {
-				$result .= ", Bus ID";
-		 }
 		 if (isset($_GET['capacity'])) {
-				$result .= ", Capacity";
+				$fields .= ", m.capacity";
+				$resultfields .= ", Capacity ";
 		 }
 		 if (isset($_GET['name'])) {
-				$result .= ", Name";
+				$fields .= ", m.name";
+				$resultfields .= ", Name ";
 		 }
 		 if (isset($_GET['fuel_type'])) {
-				$result .= ", Fuel Type";
+				$fields .= ", m.fuel_type";
+				$resultfields .= ", Fuel Type ";
 		}
 		 if (isset($_GET['purchasing_cost'])) {
-				$result .= ", Purchasing Cost";
+				$fields .= ",m.purchasing_cost";
+				$resultfields .= ", Purchasing Cost ";
 		}
 		if (isset($_GET['operating_cost'])) {
-			 $result .= ", OperatingCost";
+			 $fields .= ", m.operating_cost";
+			 $resultfields .= ", Operating Cost ";
 	 }
 
-		$result1 = substr($result, 2);
-		$result2 = executePlainSQL("SELECT $result1 FROM BusModel1");
-		printResult($result2, $result1, "");
+	 $tuple = array (
+			 ":bind1" => $_GET['bus_id']
+	 );
+
+	 $alltuples = array ($tuple);
+
+	 $result = executeBoundSQL("SELECT $fields BusModel1 m, JOIN Bus b ON m1.id = b.id WHERE m1.id = :bind1", $alltuples);
+	  printResult($result, $resultfields, "");
 
 		OCICommit($db_conn);
 }
@@ -101,6 +98,7 @@ function handleProjectRequest() {
 	<a href="."> <p>&lt; Go home</p> </a>
         <h1>Bus model finder</h1>
         <form method="POST" action="bus-models.php">
+
             <br><label for="bus_id">Bus ID:</label>
             <input name="bus_id" type="text"/>
 
@@ -119,7 +117,10 @@ function handleProjectRequest() {
             <br><label for="operating_cost">Operating cost:</label>
             <input type="checkbox" name="operating_cost"/>
 
-						<br><input type="submit" value="Go!" name="submitName">
+
+						<input type="submit" name="projjoinRequest"></p>
+
+
         </form>
 
     </body>
