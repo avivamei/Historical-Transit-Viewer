@@ -13,6 +13,85 @@ function onSubmit() {
     echo '<br><br><br>';
 }
 
+function printResult($result, $header, $name) {
+    $size = count($header);
+
+    $includeHeader = true;
+
+    //table name
+    echo "<b>" . $name . "<b>";
+
+    echo "<table border='1'>";
+
+    //rows
+    while ($rows = OCI_Fetch_Array($result, OCI_BOTH)) {
+
+        // header
+        if ($includeHeader == true) {
+            $includeHeader = false;
+            echo "<tr>";
+
+            foreach($header as $value){
+                echo  "<th>" . $value . "</th>";
+            }
+            echo "</tr>";
+        }
+
+        echo "<tr>";
+
+        for($x = 0; $x < $size; $x++){
+            echo "<td>" . $rows[$x] . "</td>";
+        }
+
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+
+function handleJoinRequest() {
+		global $db_conn;
+
+		$tuple = array (
+				":bind1" => $_GET['id']
+		);
+
+		$alltuples = array ($tuple);
+
+		$result = executeBoundSQL("SELECT  b.id, m.name, m.capacity, m.fueltype, m.purchase_cost, m.operating_cost FROM BusModels M1, BusModels M2 JOIN Bus b ON m1.id = m2.id AND m1.id = b.id WHERE m1.id = :bind1", $alltuples);
+		printResult($result, array("ID", "Name", "Capacity", "Fuel Type", "Purchasing Cost", "Operating Cost"), "Bus Model");
+}
+
+function handleProjectRequest() {
+		global $db_conn;
+
+		$result = "";
+
+		 if (isset($_GET['bus_id'])) {
+				$result .= ", Bus ID";
+		 }
+		 if (isset($_GET['capacity'])) {
+				$result .= ", Capacity";
+		 }
+		 if (isset($_GET['name'])) {
+				$result .= ", Name";
+		 }
+		 if (isset($_GET['fuel_type'])) {
+				$result .= ", Fuel Type";
+		}
+		 if (isset($_GET['purchasing_cost'])) {
+				$result .= ", Purchasing Cost";
+		}
+		if (isset($_GET['operating_cost'])) {
+			 $result .= ", OperatingCost";
+	 }
+
+		$result1 = substr($result, 2);
+		$result2 = executePlainSQL("SELECT $result1 FROM BusModel1");
+		printResult($result2, $result1, "");
+
+		OCICommit($db_conn);
+}
+
 ?>
 <html>
     <head>
@@ -40,16 +119,9 @@ function onSubmit() {
             <br><label for="operating_cost">Operating cost:</label>
             <input type="checkbox" name="operating_cost"/>
 
-            <br>
-            <select id="stop_id" name="stop_id">
-                <option value="*" selected>-- Select stop --</option>
-                <?php /*todo*/ ?>
-            </select>
-            <input type="submit" value="Go!" name="submitName">
+						<br><input type="submit" value="Go!" name="submitName">
         </form>
-        <table>
-            <!-- todo render taps -->
-        </table>
+
     </body>
 </html>
 <html
