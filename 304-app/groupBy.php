@@ -4,12 +4,13 @@
     </head>
 
     <body>
+        <a href="."> <p>&lt; Go home</p> </a>
         <h2>Find the max capacity of bus models by fuel type</h2>
         <form method="GET" action="groupBy.php"> <!--refresh page when submitted-->
             <input type="hidden" id="groupByRequest" name="groupByRequest">
-            Select: Max(capacity), fuel_type <br />
-            From: BusModels1 <br />
-            Group By: fuel_type <br /> <br />
+            SELECT Max(capacity), fuel_type <br />
+            FROM BusModels1 <br />
+            GROUP BY fuel_type <br /> <br />
             <input type="submit" name="groupBy"></p>
         </form>
 
