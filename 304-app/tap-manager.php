@@ -8,7 +8,10 @@ if (isset($_POST['submitName'])) {
     handleInsertRequest();
 } else if (isset($_POST['updateName'])) {
     handleUpdateRequest();
+} else if (isset($_POST['deleteName'])) {
+    handleDeleteRequest();
 }
+
 
 function onSubmit() {
     echo 'Submitted! This is placeholder text. POST object below:';
@@ -90,6 +93,26 @@ function handleUpdateRequest() {
     global $success;
     if ($success) {
         echo '<p>OK!</p>';
+    }
+    disconnectFromDB();
+}
+
+function handleDeleteRequest() {
+    global $db_conn;
+    connectToDB();
+
+
+    $result = executePlainSQL("DELETE FROM CompassTap
+    WHERE (
+    card_id = '".unparen($_POST['deletable_tap'])[0]."'
+    and stop = '".unparen($_POST['deletable_tap'])[4]."'
+    and time = '".unparen($_POST['deletable_tap'])[1]."'
+    )");
+
+    OCICommit($db_conn);
+    global $success;
+    if ($success) {
+        echo '<p>deleted (or not found)!</p>';
     }
     disconnectFromDB();
 }
@@ -200,6 +223,30 @@ function printResult($result, $header, $name) {
             <input type="submit" value ="Confirm and Update" name="updateName"></p>
         </form>
 
+        <br><br><br>
+
+        <!-- SECTION 3 -->
+        <h3>Delete a compass tap</h3>
+        <form method="POST" action="tap-manager.php">
+            <br><label for="deletable_tap">Compass tap to delete:</label>
+            <select name="deletable_tap" id="deletable_tap" required="true">
+                <?php
+                if (!connectToDB()) {
+                    echo 'failed to connect to db. Probably too many open connections.';
+                    return false;
+                }
+                $stid = executePlainSQL('select * from CompassTap');
+                while (($row = oci_fetch_object($stid)) != false) {
+                ?>
+                    <option value="<?= "(".$row->CARD_ID.")(".$row->TIME.")(".$row->ROUTE_NUMBER.")(".$row->ROUTE_NAME.")(".$row->STOP.")" ?>"><?= "Card ".$row->CARD_ID." tapped at ".$row->TIME." on route ".$row->ROUTE_NUMBER." ".$row->ROUTE_NAME." stop ".$row->STOP; ?></option>
+                    <?php disconnectFromDB(); ?>
+                <?php } ?>
+            </select>
+            <br><br>
+
+            <input type="hidden" id="deleteRequest" name='deleteRequest'>
+            <input type="submit" value ="Delete tap" name="deleteName"></p>
+        </form>
 
         <table>
             <!-- todo render taps -->
