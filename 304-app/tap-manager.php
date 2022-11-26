@@ -4,6 +4,8 @@ include 'sql-fns.php';
 
 if (isset($_POST['submitName'])) {
     onSubmit();
+} else if (isset($_POST['insertName'])) {
+    handleInsertRequest();
 }
 
 function onSubmit() {
@@ -17,18 +19,21 @@ function handleInsertRequest() {
     global $db_conn;
     connectToDB();
     $tuple = array (
-        'card_id' => $_POST['card_id'],
-        'tap_date' => $_POST['tap_date'],
-        'route_name' => $_POST['route_name'],
-        'stop_id' => $_POST['stop_id'],
+        ':card_id' => $_POST['card_id'],
+        ':tap_date' => $_POST['tap_date'],
+        ':route_number' => unparen($_POST['route_number_name_stop'])[0],
+        ':route_name' => unparen($_POST['route_number_name_stop'])[1],
+        ':stop' => unparen($_POST['route_number_name_stop'])[2],
     );
+    echo var_dump($tuple);
 
     $alltuples = array (
         $tuple
     );
 
-    executeBoundSQL("insert into CompassTap values (:card_id, :time, :route_number, :route_name, :stop)", $alltuples);
+    executeBoundSQL("insert into CompassTap values (:card_id, :tap_date, :route_number, :route_name, :stop)", $alltuples);
     OCICommit($db_conn);
+    echo '<p>Inserted!</p>';
     disconnectFromDB();
 }
 
@@ -90,24 +95,9 @@ function printResult($result, $header, $name) {
 
         <h3>Add a compass tap</h3>
         <form method="POST" action="tap-manager.php">
-            <input name="card_id" type="text"/>
-            <input name="tap_date" type="date"/>
-            <select name="route_name" id="route_name" required="true">
-                <option value="*" selected>-- Select route --</option>
-                <?php
-                if (!connectToDB()) {
-                    echo 'failed to connect to db. Probably too many open connections.';
-                    return false;
-                }
-                $stid = executePlainSQL('select distinct route_number, route_name from Route1');
-                while (($row = oci_fetch_object($stid)) != false) {
-                    echo var_dump($row);
-                ?>
-                    <option value="<?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME ?>"><?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME; ?></option>
-                <?php } ?>
-            </select>
-            <select id="stop_id" name="stop_id">
-                <option value="*" selected>-- Select stop --</option>
+            <input name="card_id" type="text" required="true"/>
+            <input name="tap_date" type="number" required="true"/>
+            <select id="route_number_name_stop" name="route_number_name_stop" required="true">
                 <?php
                 if (!connectToDB()) {
                     echo 'failed to connect to db. Probably too many open connections.';
@@ -120,7 +110,7 @@ function printResult($result, $header, $name) {
                     <option value="<?= "(".$row->ROUTE_NUMBER.")(".$row->ROUTE_NAME.")(".$row->STOP.")" ?>"><?= $row->ROUTE_NUMBER." ".$row->ROUTE_NAME." stop ".$row->STOP; ?></option>
                 <?php } ?>
             </select>
-            <input type="submit" value="Go!" name="submitName">
+            <input type="submit" value="Go!" name="insertName">
         </form>
 
         <br><br><br>
