@@ -19,12 +19,17 @@ function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL com
     //echo "<br>running ".$cmdstr."<br>";
     global $db_conn, $success;
 
+    if ($db_conn == NULL) {
+        echo '<br><br>executePlainSQL called with no DB connection.<br><br>';
+        $success = false;
+        // return $success;
+    }
     $statement = OCIParse($db_conn, $cmdstr);
     //There are a set of comments at the end of the file that describe some of the OCI specific functions and how they work
 
     if (!$statement) {
         echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
-        $e = OCI_Error($db_conn); // For OCIParse errors pass the connection handle
+        $e = oci_error($db_conn); // For OCIParse errors pass the connection handle
         echo htmlentities($e['message']);
         $success = False;
     }
@@ -47,32 +52,50 @@ function executeBoundSQL($cmdstr, $list) {
        See the sample code below for how this function is used */
 
     global $db_conn, $success;
+    if ($db_conn == NULL) {
+        echo '<br><br>executeBoundSQL called with no DB connection.<br><br>';
+        $success = false;
+        // return $success;
+    }
     $statement = OCIParse($db_conn, $cmdstr);
 
     if (!$statement) {
         echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
-        $e = OCI_Error($db_conn);
+        $e = oci_error($db_conn);
         echo htmlentities($e['message']);
         $success = False;
     }
 
     foreach ($list as $tuple) {
         foreach ($tuple as $bind => $val) {
-            //echo $val;
-            //echo "<br>".$bind."<br>";
-            OCIBindByName($statement, $bind, $val);
+            // echo "<br>"." binding ".$bind." to ".$val."<br>";
+            oci_bind_by_name($statement, $bind, $val);
             unset ($val); //make sure you do not remove this. Otherwise $val will remain in an array object wrapper which will not be recognized by Oracle as a proper datatype
         }
 
         $r = OCIExecute($statement, OCI_DEFAULT);
         if (!$r) {
             echo "<br>Cannot execute the following command: " . $cmdstr . "<br>";
-            $e = OCI_Error($statement); // For OCIExecute errors, pass the statementhandle
+            $e = oci_error($statement); // For OCIExecute errors, pass the statementhandle
             echo htmlentities($e['message']);
             echo "<br>";
             $success = False;
         }
     }
+    return $statement;
+}
+
+// Return an array of objects, so each object is a result row.
+// Call with the result of executePlainSQL or executeBoundSQL
+function sql_rows($res) {
+    $sql_out = [];
+    if ($res == null) {
+        return $out;
+    }
+    while(($sql_row = oci_fetch_object($res)) != false) {
+        array_push($sql_out, $sql_row);
+    }
+    return $sql_out;
 }
 
 function connectToDB() {
@@ -87,7 +110,7 @@ function connectToDB() {
         return true;
     } else {
         debugAlertMessage("Cannot connect to Database");
-        $e = OCI_Error(); // For OCILogon errors pass no handle
+        $e = oci_error(); // For OCILogon errors pass no handle
         echo htmlentities($e['message']);
         return false;
     }
