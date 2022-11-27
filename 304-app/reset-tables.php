@@ -441,6 +441,9 @@ function onReset() {
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('90020439', '18022')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('18834306', '19027')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9409')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '18022')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '19027')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9660')
 	SELECT 1 FROM DUAL
 	");
 
