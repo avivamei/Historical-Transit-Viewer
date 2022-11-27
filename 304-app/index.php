@@ -4,9 +4,17 @@
 	<a href="./test-php.php"> <p>test php</p> </a>
 	<a href="./test-oracle.php"> <p>test oracle</p> </a>
 	<h1>actual project</h1>
+
+	<br>INSERT/UPDATE/DELETE <br>
 	<a href="./tap-manager.php"> <p>tap manager</p> </a>
-	<a href="./tap-search.php"> <p>tap search</p> </a>
+
+	<br>Division <br>
 	<a href="./driver-experience.php"> <p>driver experience</p> </a>
+
+	<br>Selection <br>
+	<a href="./select.php"> <p>stops viewer</p> </a>
+
+	<br>Join and Projection <br>
 	<a href="./bus-models.php"> <p>bus models</p> </a>
 
 	<br>Aggregation with Group By <br>

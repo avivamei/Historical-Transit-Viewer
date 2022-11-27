@@ -172,8 +172,12 @@
 
             $result = executePlainSQL($query);
 
+            $heading = explode(", ", $select);
+
             echo "<hr />";
-            printResult($result, explode($select), "Select Table");
+
+
+            printResult($result, $heading, "Select Table");
         }
 
         function handleGETRequest(){
