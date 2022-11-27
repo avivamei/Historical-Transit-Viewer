@@ -274,18 +274,26 @@ INSERT ALL
 
 INSERT ALL
 	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (500000, 143, 19000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (510000, 143, 19000)
 	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (1200000, 522, 1269000)
 	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (700000, 433, 760000)
 	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (700000, 302, 740000)
 	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (400000, 92, 412000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (410000, 92, 412000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (420000, 92, 412000)
+	INTO BusModel2(purchase_cost, operating_cost, cost) VALUES (430000, 92, 412000)
 	SELECT 1 FROM DUAL;
 
 INSERT ALL
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('NFI XN40', 70, 'N Gas', 500000, 143)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('NFI XN40a', 60, 'N Gas', 510000, 143)
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('NFI XDE60', 120, 'D-E', 1200000, 522)
-	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS', 70, 'Diesel', 700000, 433)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS', 60, 'Diesel', 700000, 433)
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS HEV', 70, 'D-E', 700000, 302)
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSe', 70, 'B-E', 400000, 92)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSa', 80, 'B-E', 410000, 92)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSb', 90, 'B-E', 420000, 92)
+	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSc', 100, 'B-E', 430000, 92)
 	SELECT 1 FROM DUAL;
 
 INSERT ALL
@@ -348,5 +356,7 @@ INSERT ALL
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('90020439', '18022')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('18834306', '19027')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9409')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '18022')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '19027')
+	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9660')
 	SELECT 1 FROM DUAL;
-
