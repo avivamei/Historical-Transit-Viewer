@@ -9,9 +9,9 @@
         You must use proper semantics when entering your selection. <br /><br />
         <form method="GET" action="select.php"> 
             <input type="hidden" id="selectQueryRequest" name="selectQueryRequest">
-            SELECT <input type="text" name="Select"> <br /><br />
+            SELECT <input type="text" name="Select"> (ie. id, postcode, city)<br /><br />
             FROM Stop<br /><br />
-            WHERE <input type="text" name="Where"> <br /><br />
+            WHERE <input type="text" name="Where"> (ie. city = 'Vancouver', id = 'BW', postcode = 'V5N4B9') <br /><br /> 
             <input type="submit" value="select" name="selectQuery"></p>
         </form>
 
