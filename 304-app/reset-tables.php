@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html<!doctype html>
 <html>
     <head>
         <title>Tap manager</title>
@@ -82,7 +82,6 @@ function onReset() {
 	 ");
 	executePlainSQL("CREATE TABLE Stop(
 	 id CHAR(10),
-	 name CHAR(50),
 	 postcode CHAR(6),
 	 city CHAR(20),
 	 PRIMARY KEY (id)
@@ -185,12 +184,12 @@ function onReset() {
 	");
 
 	executePlainSQL("ALTER TABLE SkyTrainStation
-	ADD FOREIGN KEY (stopid, name) REFERENCES Stop (id, name)
+	ADD FOREIGN KEY (stopid) REFERENCES Stop (id)
 	 ON DELETE CASCADE
 	");
 
 	executePlainSQL("ALTER TABLE BusStop
-	ADD FOREIGN KEY (stopid, name) REFERENCES Stop (id, name)
+	ADD FOREIGN KEY (stopid) REFERENCES Stop (id)
 	 ON DELETE CASCADE
 	");
 
@@ -292,7 +291,6 @@ function onReset() {
 	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('CL', NULL, 'Conventional')
 	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('EL', NULL, 'Linear Induction')
 	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('ML', NULL, 'Linear Induction')
-	INTO Route2(route_number, bus_route_type, rail_type) VALUES ('531', NULL, NULL)
 	SELECT 1 FROM DUAL
 	");
 
@@ -314,60 +312,35 @@ function onReset() {
 	INTO Route1(route_number, route_name, distance) VALUES ('25', 'Brentwood Station', NULL)
 	INTO Route1(route_number, route_name, distance) VALUES ('R4', '41st Ave', NULL)
 	INTO Route1(route_number, route_name, distance) VALUES ('R2', 'Marine Dr', NULL)
-	INTO Route1(route_number, route_name, distance) VALUES ('531', 'White Rock Centre/Willowbrook', NULL)
 	SELECT 1 FROM DUAL
 	");
 
 	executePlainSQL("INSERT ALL
-	INTO Stop(id, name, postcode, city) VALUES ('BW','Commercial-Broadway', 'V5N4B9', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('CB', 'Burrard', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('MT', 'Metrotown', 'VVVVVV', 'Burnaby')
-	INTO Stop(id, name, postcode, city) VALUES ('61304', 'Eastbound Lougheed Hwy @ Harris Rd', 'V3Y2J4', 'Pitt Meadows')
-	INTO Stop(id, name, postcode, city) VALUES ('ST', 'Stadium-Chinatown', 'V6B2L3', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('50136', 'Oakridge-41st Ave Stn @ Bay 2', 'V5Z0E3', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('56474', 'Garden City Rd @ Lansdowne Rd', 'V6X3M2', 'Richmond')
-	INTO Stop(id, name, postcode, city) VALUES ('BR', 'Bridgeport', VVVVVV, Richmond)
-	INTO Stop(id, name, postcode, city) VALUES ('CO', 'Columbia', VVVVVV, Coquitlam)
-	INTO Stop(id, name, postcode, city) VALUES ('LG', 'Langara-49th Avenue', VVVVVV, Vancouver)
-	INTO Stop(id, name, postcode, city) VALUES ('50904', 'Westbound E Broadway @ Rupert St', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('50950', 'Westbound W 4th Ave @ Alma St', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('50545', 'Southbound Granville St @ Angus Dr', 'V6X3M2', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('61772', 'Marine Drive Station', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('MD', 'Marine Drive', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('51862', 'Burquitlam Station', 'VVVVVV', 'Burnaby')
-	INTO Stop(id, name, postcode, city) VALUES ('BQ', 'Burquitlam', 'VVVVVV', 'Burnaby')
-	INTO Stop(id, name, postcode, city) VALUES ('50627', 'Granville @ Robson St', 'VVVVVV', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('40002', 'UBC Exchange Bus Loop', 'V6T1Z1', 'Vancouver')
-	INTO Stop(id, name, postcode, city) VALUES ('20230', 'Brentwood Station', 'VVVVVV', 'Burnaby')
-	INTO Stop(id, name, postcode, city) VALUES ('BT', 'Brentwood', 'VVVVVV', 'Burnaby')
-
+	INTO Stop(id, postcode, city) VALUES ('BW', 'V5N4B9', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('CB', 'VVVVVV', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('MT', 'VVVVVV', 'Burnaby')
+	INTO Stop(id, postcode, city) VALUES ('61304', 'V3Y2J4', 'Pitt Meadows')
+	INTO Stop(id, postcode, city) VALUES ('ST', 'V6B2L3', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('50136', 'V5Z0E3', 'Vancouver')
+	INTO Stop(id, postcode, city) VALUES ('56474', 'V6X3M2', 'Richmond')
 	SELECT 1 FROM DUAL
 	");
 
+	// INTO BusStop(stopid, name) VALUES ('50904', 'Westbound E Broadway @ Rupert St')
+	// INTO BusStop(stopid, name) VALUES ('50590', 'Westbound W 4th Ave @ Alma St')
+	// INTO BusStop(stopid, name) VALUES ('50545', 'Southbound Granville St @ Angus Dr')
 	executePlainSQL("INSERT ALL
 	INTO BusStop(stopid, name) VALUES ('50136', 'Oakridge-41st Ave Station @ Bay 2')
 	INTO BusStop(stopid, name) VALUES ('61304', 'Eastbound Lougheed Hwy @ Harris Rd')
-	INTO BusStop(stopid, name) VALUES ('50904', 'Westbound E Broadway @ Rupert St')
-	INTO BusStop(stopid, name) VALUES ('50590', 'Westbound W 4th Ave @ Alma St')
-	INTO BusStop(stopid, name) VALUES ('50545', 'Southbound Granville St @ Angus Dr')
-	INTO BusStop(stopid, name) VALUES ('61772', 'Marine Drive Station')
-	INTO BusStop(stopid, name) VALUES ('51862', 'Burquitlam Station')
-	INTO BusStop(stopid, name) VALUES ('50627', 'Granville @ Robson St')
-	INTO BusStop(stopid, name) VALUES ('40002', 'UBC Exchange Bus Loop')
-	INTO BusStop(stopid, name) VALUES ('20230', 'Brentwood Station')
 	SELECT 1 FROM DUAL
 	");
 
-
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('BR', 'Bridgeport', 2)
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('CO', 'Columbia', 2)
+	// INTO SkyTrainStation(stopid, name, platforms) VALUES ('LG', 'Langara-49th Avenue', 2)
 	executePlainSQL("INSERT ALL
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('BR', 'Bridgeport', 2)
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('CO', 'Columbia', 2)
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('LG', 'Langara-49th Avenue', 2)
 	INTO SkyTrainStation(stopid, name, platforms) VALUES ('ST', 'Stadium-Chinatown', 3)
 	INTO SkyTrainStation(stopid, name, platforms) VALUES ('BW', 'Commercial-Broadway', 5)
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('MD', 'Marine Drive', 4)
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('BQ', 'Burquitlam', 4)
-	INTO SkyTrainStation(stopid, name, platforms) VALUES ('BT', 'Brentwood', 4)
 	SELECT 1 FROM DUAL
 	");
 
@@ -386,7 +359,6 @@ function onReset() {
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS', 70, 'Diesel', 700000, 433)
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFS HEV', 70, 'D-E', 700000, 302)
 	INTO BusModel1(name, capacity, fuel_type, purchase_cost, operating_cost) VALUES ('Nova Bus LFSe', 70, 'B-E', 400000, 92)
-
 	SELECT 1 FROM DUAL
 	");
 
@@ -414,42 +386,26 @@ function onReset() {
 	INTO Driver(id, first_name, last_name) VALUES ('18834306', 'Evan', 'Holmes')
 	INTO Driver(id, first_name, last_name) VALUES ('44947234', 'Lan', 'Duong')
 	INTO Driver(id, first_name, last_name) VALUES ('63057871', 'Aman', 'Shah')
-	INTO Driver(id, first_name, last_name) VALUES ('46545863', 'Emily', 'Chu')
-	INTO Driver(id, first_name, last_name) VALUES ('59344002', 'Aviva', 'Mei')
-	INTO Driver(id, first_name, last_name) VALUES ('10053585', 'Tom', 'Henley')
-
 	SELECT 1 FROM DUAL
 	");
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('61772', 'Marine Dr', 'R2')
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('51862', 'Burquitlam Station/SFU', '143')
+	// INTO AvailableStop(stop, route_name, route_number) VALUES ('50627', 'Robson/Downtown', '5')
 	executePlainSQL("INSERT ALL
-	INTO AvailableStop(route_number, route_name, stop) VALUES ('143', 'Burquitlam Station/SFU', '143')
-	INTO AvailableStop(route_number, route_name, stop) VALUES ('R2', 'Marine Dr', '61772')
-	INTO AvailableStop(route_number, route_name, stop) VALUES ('5', 'Robson', '50627')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('R4', '41st Ave', '50136')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('EL', 'Waterfront', 'ST')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('EL', 'Waterfront', 'CB')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'CB')
 	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'MT')
-	INTO AvailableStop(route_number, route_name, stop) VALUES ('', 'VCC-Clark', 'CB')
-	INTO AvailableStop(route_number, route_name, stop) VALUES ('ML', 'VCC-Clark', 'MT')
-
-
 	SELECT 1 FROM DUAL
 	");
 
 	executePlainSQL("INSERT ALL
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('53426693990928605252', '1212', 'R4', '41st Ave', '50136')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '1104', 'EL', 'Waterfront', 'ST')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('29700392471242162660', '0706', 'EL', 'Waterfront', 'CB')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('11327375108351674279', '0424', 'ML', 'VCC-Clark', 'CB')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '0736', '99', 'UBC', '40002')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('43495576758354658324', '0901', '16', '29th Avenue Stn', '50627')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '0303', '25', 'Brentwood Station', '20230')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('59045436534568346623', '0101', 'CL', 'Bridgeport', 'BR')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('00403544285234959843', '0829', 'CL', 'Langara-49th Avenue', 'LG')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('39483575745783458754', '0907', 'EL', 'Waterfront', 'CB')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('03423453847568346544', '1230', 'ML', 'VCC-Clark', 'CB')
-	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('59045436534568346623', '0125', 'CL', 'Langara-49th Avenue', 'LG')
-
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('53426693990928605252', '1234', 'R4', '41st Ave', '50136')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '1235', 'EL', 'Waterfront', 'ST')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('29700392471242162660', '1236', 'EL', 'Waterfront', 'CB')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('11327375108351674279', '1237', 'ML', 'VCC-Clark', 'CB')
+	INTO CompassTap(card_id, time, route_number, route_name, stop) VALUES ('32761835554193258185', '1238', 'ML', 'VCC-Clark', 'MT')
 	SELECT 1 FROM DUAL
 	");
 
@@ -459,38 +415,24 @@ function onReset() {
 	INTO SkyTrain(route_number, route_name, id, model) VALUES ('EL', 'Waterfront', '52', 'Bombardier ICTS Mark I')
 	INTO SkyTrain(route_number, route_name, id, model) VALUES ('ML', 'VCC-Clark', '144', 'Bombardier ICTS Mark I')
 	INTO SkyTrain(route_number, route_name, id, model) VALUES ('CL', 'Waterfront', '219', 'Hyundai Rotem EMU')
-	INTO SkyTrain(route_number, route_name, id, model) VALUES ('ML', 'Lafarge Lake-Douglas', '160', 'Bombardier ICTS Mark I')
-	INTO SkyTrain(route_number, route_name, id, model) VALUES ('CL', 'Langara 49th Avenue', '257', 'Hyundai Rotem EMU')
-	INTO SkyTrain(route_number, route_name, id, model) VALUES ('ML', 'VCC-Clark', '123', 'Bombardier ART Mark II')
-	INTO SkyTrain(route_number, route_name, id, model) VALUES ('EL', 'Production Way-University', '322', 'Bombardier ART Mark II')
-
-
-
 	SELECT 1 FROM DUAL
 	");
 
-
+	// INTO Bus(id, license_plate, model, route_name, route_number) VALUES ('16047', 'LG4805', 'NFI XN40', 'White Rock Centre/Willowbrook', '531')
 	executePlainSQL("INSERT ALL
 	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R4', '41st Ave', '18022', 'NG5745', 'NFI XDE60')
 	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('25', 'Brentwood Station', '9409', 'BY4048', 'Nova Bus LFS HEV')
 	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R2', 'Marine Dr', '19027', 'NN9907', 'NFI XDE60')
 	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('16', '29th Avenue Stn', '9660', 'KX3049', 'Nova Bus LFS')
-	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('531', 'White Rock Centre/Willowbrook', '16047', 'LG4805', 'NFI XN40', )
-	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('99', 'UBC', '60432', 'OP4035', 'NFI XN40')
-	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R4', 'UBC', '19992', 'UM1012', 'NFI XN40')
-	INTO Bus(route_number, route_name, id, license_plate, model) VALUES ('R2', 'Marine Dr', '50242', 'IW2329', 'NFI XDE60')
 	SELECT 1 FROM DUAL
 	");
 
+	// INTO DriverAssignment(driver_id, bus_id) VALUES ('63057871', '16047')
 	executePlainSQL("INSERT ALL
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('44947234', '9660')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('90020439', '18022')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('18834306', '19027')
 	INTO DriverAssignment(driver_id, bus_id) VALUES ('28903460', '9409')
-	INTO DriverAssignment(driver_id, bus_id) VALUES ('63057871', '16047')
-	INTO DriverAssignment(driver_id, bus_id) VALUES ('59344002', '60432')
-	INTO DriverAssignment(driver_id, bus_id) VALUES ('46545863', '19992')
-	INTO DriverAssignment(driver_id, bus_id) VALUES ('10053585', '50242')
 	SELECT 1 FROM DUAL
 	");
 
